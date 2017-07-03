@@ -69,7 +69,7 @@ def lambda_handler(event, context):
                 retention_days,
             )
             if (service_tag):
-                ec.create_tags(Resources=snap['SnapshotId'], Tags=[ { 'Key': 'service', 'Value': service_tag } ])
+                ec.create_tags(Resources=[snap['SnapshotId']], Tags=[ { 'Key': 'service', 'Value': service_tag } ])
 
     for retention_days in to_tag.keys():
         delete_date = datetime.date.today() + datetime.timedelta(days=retention_days)

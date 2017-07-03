@@ -43,11 +43,12 @@ def lambda_handler(event, context):
 
             # figure out instance name if there is one
             instance_name = ""
+            service_tag = ""
             for tag in instance['Tags']:
-                if tag['Key'] != 'Name':
-                    continue
-                else:
+                if tag['Key'] == 'Name':
                     instance_name = tag['Value']
+                elif tag['Key'] == 'service':
+                    service_tag = tag['Value']
             
             description = '%s - %s (%s)' % ( instance_name, vol_id, dev_name )
 
@@ -67,6 +68,8 @@ def lambda_handler(event, context):
                 instance_name,
                 retention_days,
             )
+            if (service_tag):
+                ec.create_tags(Resources=snap['SnapshotId'], Tags=[ { 'Key': 'service', 'Value': service_tag } ])
 
     for retention_days in to_tag.keys():
         delete_date = datetime.date.today() + datetime.timedelta(days=retention_days)
